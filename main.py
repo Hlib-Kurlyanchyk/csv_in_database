@@ -1,8 +1,6 @@
 from ebay_ops import *
 from immonet_ops import *
 from immowelt_ops import *
-from immowelt_data_cleaning import *
-import pytest
 
 from loguru import logger
 
@@ -18,7 +16,6 @@ def DROP_TABLE(table_name):
 
 
 logger.info('# --------------------------- # Tabele "immowelt" # ---------------------------- #')
-DATA_IMMOWELT_COLLECTION()
 DROP_TABLE("immowelt")
 TABLE_IMMOWELT_CREATE()
 TABLE_IMMOWELT_FILL(100)

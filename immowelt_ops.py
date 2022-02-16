@@ -133,6 +133,8 @@ def TABLE_IMMOWELT_FILL(border):
             table_fill_line_DictInputData_new = table_fill_line_DictInputData_old
             try:
                 for k in range(len(keys_collection_clear)):  # work with each key in a line
+                    if k == 17:
+                        print()
                     # filling an array with input data
                     for key in data_2:  # checking each key
                         if key == keys_collection_clear[k]:
