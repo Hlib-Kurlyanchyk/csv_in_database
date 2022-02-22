@@ -1,7 +1,7 @@
 import re
 
 
-def old_str_to_float(data_price: str) -> float | None:
+def old_price_to_float(data_price: str) -> float | None:
     if isinstance(data_price, int):
         return float(data_price)
 
@@ -54,5 +54,19 @@ def old_str_to_float(data_price: str) -> float | None:
         return None
 
 
+def price_to_float(data_price):
+    if isinstance(data_price, int):
+        return float(data_price)
+
+    elif data_price is None or data_price == '':
+        return None
+
+    elif re.search(r"\d", data_price) is None:
+        return None
+
+    elif isinstance(data_price, str):
+        return float(re.sub(r'[,.](\d{3})', r'\1', re.sub('[^0-9,.]', '', data_price)).replace(',', '.'))
+
+
 def test_price_to_float():
-    assert old_str_to_float("1.344") == 1344
+    assert price_to_float("1.340") == 1340

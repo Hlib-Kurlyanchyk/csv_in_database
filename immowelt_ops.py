@@ -16,6 +16,9 @@ immowelt_path = "RawData/RawData_immowelt/"
 directories = os.listdir(immowelt_path)
 keys_collection_clear = []
 
+price_list_raw = []
+price_list_clear = []
+
 # print(len(data_2.keys()))
 # print(len(data_2))
 
@@ -159,25 +162,30 @@ def TABLE_IMMOWELT_FILL(border):
                         # print()
                         if key == 'price':
                             table_fill_line_Complate += \
-                                "'" + str(old_str_to_float(table_fill_line_DictInputData_new[key])) + "',"
+                                "'" + str(price_to_float(table_fill_line_DictInputData_new[key])) + "',"
+
+                            price_list_raw.append(table_fill_line_DictInputData_new[key])
+                            price_list_clear.append(price_to_float(table_fill_line_DictInputData_new[key]))
+
                         elif key == 'num_rooms':
                             table_fill_line_Complate += \
-                                "'" + str(old_str_to_float(table_fill_line_DictInputData_new[key])) + "',"
+                                "'" + str(price_to_float(table_fill_line_DictInputData_new[key])) + "',"
                         elif key == 'space1':
                             table_fill_line_Complate += \
-                                "'" + str(old_str_to_float(table_fill_line_DictInputData_new[key])) + "',"
+                                "'" + str(price_to_float(table_fill_line_DictInputData_new[key])) + "',"
                         elif key == 'space3':
                             table_fill_line_Complate += \
-                                "'" + str(old_str_to_float(table_fill_line_DictInputData_new[key])) + "',"
+                                "'" + str(price_to_float(table_fill_line_DictInputData_new[key])) + "',"
                         else:
                             table_fill_line_Complate += "'" + str(table_fill_line_DictInputData_new[key]) + "',"
                     else:
                         table_fill_line_Complate += "'" + str(table_fill_line_DictInputData_new[key]) + "');"
             except:
-                LOG_DOCUMENTATION('e', 'creating a complete input string', file_number, i)
+                pass
+                #LOG_DOCUMENTATION('e', 'creating a complete input string', file_number, i)
             else:
                 pass
-                LOG_DOCUMENTATION('d', 'creating a complete input string', file_number, i)
+                #LOG_DOCUMENTATION('d', 'creating a complete input string', file_number, i)
 
             # enter the full input string
             try:
@@ -185,9 +193,11 @@ def TABLE_IMMOWELT_FILL(border):
                 cursor.execute(table_fill_line_Complate)
                 conn.commit()
             except:
-                LOG_DOCUMENTATION('e', 'enter the full input string', file_number, i)
+                pass
+                #LOG_DOCUMENTATION('e', 'enter the full input string', file_number, i)
             else:
-                LOG_DOCUMENTATION('d', 'enter the full input string', file_number, i)
+                pass
+                #LOG_DOCUMENTATION('d', 'enter the full input string', file_number, i)
 
-        logger.info('The file "' + directories[file_number] + '" was successful filled in the table "immowelt"')
+        #logger.info('The file "' + directories[file_number] + '" was successful filled in the table "immowelt"')
     logger.info('The table "immowelt" was filled')

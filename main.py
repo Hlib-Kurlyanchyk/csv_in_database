@@ -18,7 +18,13 @@ def DROP_TABLE(table_name):
 logger.info('# --------------------------- # Tabele "immowelt" # ---------------------------- #')
 DROP_TABLE("immowelt")
 TABLE_IMMOWELT_CREATE()
-TABLE_IMMOWELT_FILL(100)
+TABLE_IMMOWELT_FILL(1000)
+
+for i in range(len(price_list_raw)):
+    pass
+    #print(str(price_list_clear[i]) + '  ----- ' + str(price_list_raw[i]))
+
+
 
 # logger.info('# ------------------------------ # Table "ebay" # ------------------------------ #')
 # DROP_TABLE("ebay")
