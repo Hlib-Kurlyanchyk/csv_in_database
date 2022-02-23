@@ -19,6 +19,7 @@ keys_collection_clear = []
 price_list_raw = []
 price_list_clear = []
 
+
 # print(len(data_2.keys()))
 # print(len(data_2))
 
@@ -28,11 +29,11 @@ def LOG_DOCUMENTATION(result, situation, file_number, i):
         pass
         if result == 'e':
             logger.error('The error was occurred while --- ' + situation + ''
-                         ' in file' + str(directories[file_number]) +
+                                                                           ' in file' + str(directories[file_number]) +
                          ' and on the line ' + str(i))
         if result == 'd':
             logger.debug('The ' + situation + ''
-                         ' in file ' + str(directories[file_number]) +
+                                              ' in file ' + str(directories[file_number]) +
                          ' and on the line ' + str(i) + ' was successful')
     else:
         if result == 'e':
@@ -77,22 +78,20 @@ def TABLE_IMMOWELT_CREATE():
             elif counter == len(keys_collection_clear):
                 table_craattion_line += key + " VARCHAR);"
     except:
-        pass
-        #LOG_DOCUMENTATION('e', 'creating a query to create a table', None, None)
+        LOG_DOCUMENTATION('e', 'creating a query to create a table', None, None)
     else:
         pass
-        #LOG_DOCUMENTATION('d', 'creating a query to create a table', None, None)
+        # LOG_DOCUMENTATION('d', 'creating a query to create a table', None, None)
 
     # enter a query to create a table
     try:
         cursor.execute(table_craattion_line)
         conn.commit()
     except:
-        pass
-        #LOG_DOCUMENTATION('e', 'enter a query to create a table', None, None)
+        LOG_DOCUMENTATION('e', 'enter a query to create a table', None, None)
     else:
         pass
-        #LOG_DOCUMENTATION('d', 'enter a query to create a table', None, None)
+        # LOG_DOCUMENTATION('d', 'enter a query to create a table', None, None)
 
 
 def TABLE_IMMOWELT_FILL(border):
@@ -109,11 +108,10 @@ def TABLE_IMMOWELT_FILL(border):
             elif counter == len(keys_collection_clear):
                 table_fill_line_TableInfo += keys_collection_clear[i] + ") VALUES ("
     except:
-        pass
-        #LOG_DOCUMENTATION('e', 'creating the first part of the query to create the table', None, None)
+        LOG_DOCUMENTATION('e', 'creating the first part of the query to create the table', None, None)
     else:
         pass
-        #LOG_DOCUMENTATION('d', 'creating the first part of the query to create the table', None, None)
+        # LOG_DOCUMENTATION('d', 'creating the first part of the query to create the table', None, None)
 
     # creating an empty array with input data
     try:
@@ -122,10 +120,10 @@ def TABLE_IMMOWELT_FILL(border):
             table_fill_line_DictInputData_old[keys_collection_clear[i]] = None
     except:
         pass
-        #LOG_DOCUMENTATION('e', 'creating an empty array with input data', None, None)
+        # LOG_DOCUMENTATION('e', 'creating an empty array with input data', None, None)
     else:
         pass
-        #LOG_DOCUMENTATION('d', 'creating an empty array with input data', None, None)
+        # LOG_DOCUMENTATION('d', 'creating an empty array with input data', None, None)
 
     # ///
     for file_number in range(len(directories)):  # work with each file
@@ -145,10 +143,10 @@ def TABLE_IMMOWELT_FILL(border):
                                 str(data_2[key][i]).replace('"', '-').replace("'", "-")
             except:
                 pass
-                #LOG_DOCUMENTATION('e', 'filling an array with input data', file_number, i)
+                # LOG_DOCUMENTATION('e', 'filling an array with input data', file_number, i)
             else:
                 pass
-                #LOG_DOCUMENTATION('d', 'filling an array with input data', file_number, i)
+                # LOG_DOCUMENTATION('d', 'filling an array with input data', file_number, i)
 
             # creating a complete input string
             table_fill_line_Complate = table_fill_line_TableInfo
@@ -160,44 +158,53 @@ def TABLE_IMMOWELT_FILL(border):
                         # print(key)
                         # print("    " + table_fill_line_DictInputData_new[key])
                         # print()
-                        if key == 'price':
-                            table_fill_line_Complate += \
-                                "'" + str(price_to_float(table_fill_line_DictInputData_new[key])) + "',"
 
-                            price_list_raw.append(table_fill_line_DictInputData_new[key])
-                            price_list_clear.append(price_to_float(table_fill_line_DictInputData_new[key]))
+                        if key == 'immowelt_id':
+                            table_fill_line_Complate += \
+                                "'" + str(immowelt_id_clean(table_fill_line_DictInputData_new[key])) + "',"
+
+                        elif key == 'price':
+                            table_fill_line_Complate += \
+                                "'" + str(price_clean(table_fill_line_DictInputData_new[key])) + "',"
+
+                        elif key == 'address':
+                            table_fill_line_Complate += \
+                                "'" + str(address_clean(table_fill_line_DictInputData_new[key])) + "',"
 
                         elif key == 'num_rooms':
                             table_fill_line_Complate += \
-                                "'" + str(price_to_float(table_fill_line_DictInputData_new[key])) + "',"
+                                "'" + str(price_clean(table_fill_line_DictInputData_new[key])) + "',"
+
                         elif key == 'space1':
                             table_fill_line_Complate += \
-                                "'" + str(price_to_float(table_fill_line_DictInputData_new[key])) + "',"
+                                "'" + str(price_clean(table_fill_line_DictInputData_new[key])) + "',"
+
                         elif key == 'space3':
                             table_fill_line_Complate += \
-                                "'" + str(price_to_float(table_fill_line_DictInputData_new[key])) + "',"
+                                "'" + str(price_clean(table_fill_line_DictInputData_new[key])) + "',"
+
                         else:
                             table_fill_line_Complate += "'" + str(table_fill_line_DictInputData_new[key]) + "',"
                     else:
                         table_fill_line_Complate += "'" + str(table_fill_line_DictInputData_new[key]) + "');"
             except:
                 pass
-                #LOG_DOCUMENTATION('e', 'creating a complete input string', file_number, i)
+                # LOG_DOCUMENTATION('e', 'creating a complete input string', file_number, i)
             else:
                 pass
-                #LOG_DOCUMENTATION('d', 'creating a complete input string', file_number, i)
+                # LOG_DOCUMENTATION('d', 'creating a complete input string', file_number, i)
 
             # enter the full input string
             try:
-                logger.debug(table_fill_line_Complate)
+                # logger.debug(table_fill_line_Complate)
                 cursor.execute(table_fill_line_Complate)
                 conn.commit()
             except:
                 pass
-                #LOG_DOCUMENTATION('e', 'enter the full input string', file_number, i)
+                LOG_DOCUMENTATION('e', 'enter the full input string', file_number, i)
             else:
                 pass
-                #LOG_DOCUMENTATION('d', 'enter the full input string', file_number, i)
+                LOG_DOCUMENTATION('d', 'enter the full input string', file_number, i)
 
-        #logger.info('The file "' + directories[file_number] + '" was successful filled in the table "immowelt"')
+        # logger.info('The file "' + directories[file_number] + '" was successful filled in the table "immowelt"')
     logger.info('The table "immowelt" was filled')

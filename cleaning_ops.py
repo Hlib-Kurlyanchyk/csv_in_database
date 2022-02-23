@@ -1,7 +1,7 @@
 import re
 
 
-def old_price_to_float(data_price: str) -> float | None:
+def old_price_clean(data_price: str) -> float | None:
     if isinstance(data_price, int):
         return float(data_price)
 
@@ -54,7 +54,43 @@ def old_price_to_float(data_price: str) -> float | None:
         return None
 
 
-def price_to_float(data_price):
+def immowelt_id_clean(data_immowelt_id: str) -> str | None:
+    # if data_immowelt_id != str:
+    #    return None
+
+    # if data_immowelt_id is None or data_immowelt_id == '' or data_immowelt_id == 'nan':
+    #   return None
+
+    if isinstance(data_immowelt_id, str):
+        if len(data_immowelt_id) >= 7:
+            try:
+                return str(data_immowelt_id[:7])
+            except:
+                return None
+        else:
+            return None
+    else:
+        return None
+
+
+def address_clean(data_address: str) -> str | None:     # string because PLZ "09232" can not be integer
+    data_address = str(data_address)
+    if data_address is None or data_address == '':
+        return None
+    else:
+        index_first_num = re.search(r"\d", data_address)  # find the index of the first number
+        if index_first_num is not None:
+            data_address = data_address[index_first_num.start():index_first_num.start()+5]
+            try:
+                return str(data_address)
+            except:
+                return None
+        else:
+            return None
+
+
+def price_clean(data_price: str) -> float | None:
+
     if isinstance(data_price, int):
         return float(data_price)
 
@@ -66,7 +102,3 @@ def price_to_float(data_price):
 
     elif isinstance(data_price, str):
         return float(re.sub(r'[,.](\d{3})', r'\1', re.sub('[^0-9,.]', '', data_price)).replace(',', '.'))
-
-
-def test_price_to_float():
-    assert price_to_float("1.340") == 1340
