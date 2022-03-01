@@ -18,7 +18,8 @@ def DROP_TABLE(table_name):
 logger.info('# --------------------------- # Tabele "immowelt" # ---------------------------- #')
 DROP_TABLE("immowelt")
 TABLE_IMMOWELT_CREATE()
-TABLE_IMMOWELT_FILL(0)
+TABLE_IMMOWELT_DATA_COPYING()
+TABLE_IMMOWELT_FILL(100)
 
 
 # logger.info('# ------------------------------ # Table "ebay" # ------------------------------ #')
