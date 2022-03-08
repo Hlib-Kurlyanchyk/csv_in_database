@@ -14,13 +14,13 @@ password = '091807'
 conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host)
 cursor = conn.cursor()
 
-immowelt_path_raw = "Data/RawData/RawData_immowelt/"
-immowelt_path_merged = "Data/MergedData/MergedData_immowelt/"
-immowelt_path_clean = "Data/CleanData/"
+ebay_path_raw = "Data/RawData/RawData_ebay/"
+ebay_path_merged = "Data/MergedData/MergedData_ebay/"
+ebay_path_clean = "Data/CleanData/"
 
 
-directories_raw = os.listdir(immowelt_path_raw)
-directories_clean = os.listdir(immowelt_path_clean)
+directories_raw = os.listdir(ebay_path_raw)
+directories_clean = os.listdir(ebay_path_clean)
 keys_collection_clear = []
 
 
@@ -51,12 +51,13 @@ def log_documentation(result, situation, file_name, line):
                 logger.debug('The ' + situation + ' was successful')
 
 
-def TABLE_IMMOWELT_CREATE():
+def Table_ebay_crate():
     # collection of all keys
+    global keys_collection_raw
     try:
         keys_collection_raw = []
         for file_name in range(len(directories_raw)):
-            data_2 = pd.read_csv(immowelt_path_raw + directories_raw[file_name])
+            data_2 = pd.read_csv(ebay_path_raw + directories_raw[file_name])
             for key in data_2:
                 keys_collection_raw.append(key)
     except:
@@ -76,37 +77,37 @@ def TABLE_IMMOWELT_CREATE():
 
     # creating a query to create a table
     try:
-        table_craattion_line = "CREATE TABLE immowelt ("
+        table_craation_line = "CREATE TABLE ebay ("
         counter = 0
         for key in keys_collection_clear:
             counter += 1
             if counter == 1:
-                table_craattion_line += "num VARCHAR, "
+                table_craation_line += "Num VARCHAR, "
             elif (counter > 1) and (counter < len(keys_collection_clear)):
-                table_craattion_line += key + " VARCHAR, "
+                table_craation_line += key + " VARCHAR, "
             elif counter == len(keys_collection_clear):
-                table_craattion_line += key + " VARCHAR);"
+                table_craation_line += key + " VARCHAR);"
     except:
         log_documentation('e', 'creating a query to create a table', None, None)
     else:
         pass
-        # LOG_DOCUMENTATION('d', 'creating a query to create a table', None, None)
+        # log_documentation('d', 'creating a query to create a table', None, None)
 
     # enter a query to create a table
     try:
-        cursor.execute(table_craattion_line)
+        cursor.execute(table_craation_line)
         conn.commit()
     except:
         log_documentation('e', 'enter a query to create a table', None, None)
     else:
         pass
-        # LOG_DOCUMENTATION('d', 'enter a query to create a table', None, None)
+        # log_documentation('d', 'enter a query to create a table', None, None)
 
 
-def TABLE_IMMOWELT_DATA_COPYING():
+def Table_ebay_copying():
     # example how to import csv and work in json
 
-    files: list = glob.glob(immowelt_path_raw + "*.csv")
+    files: list = glob.glob(ebay_path_raw + "*.csv")
 
     data_from_path: list = [pd.read_csv(file) for file in files]
 
@@ -120,15 +121,15 @@ def TABLE_IMMOWELT_DATA_COPYING():
 
     data_json: json = big_dataframe.to_json()
     data_json = json.loads(data_json)
-    with open(immowelt_path_merged + "MergedData_immowelt.json", "w") as f:
+    with open(ebay_path_merged + "MergedData_ebay.json", "w") as f:
         json.dump(data_json, f, indent=4)
 
 
-def TABLE_IMMOWELT_DATA_CLEANING():
+def Table_ebay_cleaning():
     # open the merged file and convert it to a dictionary
     new_merged_dict = {}
     clear_dict = {}
-    with open(immowelt_path_merged + "MergedData_immowelt.json", "r") as f:
+    with open(ebay_path_merged + "MergedData_ebay.json", "r") as f:
         data = json.load(f)
 
     # Creating a clean dict with another structure
@@ -153,23 +154,23 @@ def TABLE_IMMOWELT_DATA_CLEANING():
         break
 
     # Inserting a clean dict into a new file
-    f = open(immowelt_path_clean + "CleanData_immowelt.json", "w")
+    f = open(ebay_path_clean + "CleanData_immowelt.json", "w")
     json.dump(clear_dict, f, indent=4)
-    logger.info('CleanData_immowelt was created')
+    logger.info('CleanData_ebay was created')
 
     # Inserting a merged dict into a new file
-    f = open(immowelt_path_merged + "NewMergedData_immowelt.json", "w")
+    f = open(ebay_path_merged + "NewMergedData_immowelt.json", "w")
     json.dump(new_merged_dict, f, indent=4)
-    logger.info('MergedData_immowelt was created')
+    logger.info('MergedData_ebay was created')
 
 
-def TABLE_IMMOWELT_DATA_FILL():
-    with open(immowelt_path_clean + "CleanData_immowelt.json", "r") as f:
+def Table_ebay_fill():
+    with open(ebay_path_clean + "CleanData_immowelt.json", "r") as f:
         data = json.load(f)
 
     # creating the first part of the query to create the table
     try:
-        table_fill_line_TableInfo = "INSERT INTO immowelt ("
+        table_fill_line_TableInfo = "INSERT INTO ebay ("
         counter = 0
         for i in range(len(keys_collection_clear)):
             counter += 1

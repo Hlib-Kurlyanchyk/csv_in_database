@@ -22,16 +22,19 @@ TABLE_IMMOWELT_DATA_CLEANING()
 TABLE_IMMOWELT_DATA_FILL()
 
 
-# logger.info('# ------------------------------ # Table "ebay" # ------------------------------ #')
-# DROP_TABLE("ebay")
-# TABLE_EBAY_CREATE()
-# TABLE_EBAY_FILL(0)
+logger.info('# ------------------------------ # Table "ebay" # ------------------------------ #')
+DROP_TABLE("ebay")
+Table_ebay_crate()
+Table_ebay_copying()
+Table_ebay_cleaning()
+Table_ebay_fill()
 
-# logger.info('# ---------------------------- # Table "immonet" # ----------------------------- #')
-# DROP_TABLE("immonet")
-# TABLE_IMMONET_CREATE()
-# TABLE_IMMONET_FILL(0)
-
+logger.info('# ---------------------------- # Table "immonet" # ----------------------------- #')
+DROP_TABLE("immonet")
+Table_immonet_crate()
+Table_immonet_copying()
+Table_immonet_cleaning()
+Table_immonet_fill()
 
 cursor.close()
 conn.close()

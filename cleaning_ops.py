@@ -56,43 +56,44 @@ def old_price_clean(data_price: str) -> float | None:
 
 def immowelt_id_clean(data_immowelt_id: str) -> str | None:
     if isinstance(data_immowelt_id, str):
-        if len(data_immowelt_id) >= 7:
-            try:
-                return str(data_immowelt_id[:7])
-            except:
-                return None
-        else:
+        data_immowelt_id = data_immowelt_id.replace(' ', '')
+        if len(data_immowelt_id) != 7:
             return None
+        else:
+            return str(data_immowelt_id)
     else:
         return None
 
 
-def address_clean(data_address: str) -> str | None:     # string because PLZ "09232" can not be integer
-    data_address = str(data_address)
-    if data_address is None or data_address == '':
-        return None
-    else:
-        index_first_num = re.search(r"\d", data_address)  # find the index of the first number
-        if index_first_num is not None:
-            data_address = data_address[index_first_num.start():index_first_num.start()+5]
-            try:
-                return str(data_address)
-            except:
-                return None
-        else:
+def address_clean(data_address: str) -> int | None:     # string because PLZ "09232" can not be integer
+    if isinstance(data_address, int):
+        return data_address
+    elif isinstance(data_address, str):
+        if data_address == '':
             return None
+        else:
+            index_first_num = re.search(r"\d", data_address)  # find the index of the first number
+            if index_first_num is not None:
+                data_address = data_address[index_first_num.start():index_first_num.start()+5]
+                try:
+                    return int(data_address)
+                except:
+                    return None
+            else:
+                return None
+    else:
+        return None
 
 
 def price_clean(data_price: str) -> float | None:
-
     if isinstance(data_price, int):
         return float(data_price)
 
-    elif data_price is None or data_price == '':
-        return None
-
-    elif re.search(r"\d", data_price) is None:
-        return None
-
     elif isinstance(data_price, str):
-        return float(re.sub(r'[,.](\d{3})', r'\1', re.sub('[^0-9,.]', '', data_price)).replace(',', '.'))
+        if (data_price == '') or (re.search(r"\d", data_price) is None):
+            return None
+        else:
+            return float(re.sub(r'[,.](\d{3})', r'\1', re.sub('[^0-9,.]', '', data_price)).replace(',', '.'))
+
+    else:
+        return None
