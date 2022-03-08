@@ -4,6 +4,7 @@ import os
 from loguru import logger
 import json
 import glob
+from cleaning_ops import immowelt_id_clean, address_clean, price_clean
 
 host = 'localhost'
 user = 'postgres'
@@ -14,59 +15,46 @@ conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host)
 cursor = conn.cursor()
 
 immowelt_path_raw = "Data/RawData/RawData_immowelt/"
-immowelt_path_clean = "Data/CleanData/CleanData_immowelt/"
-immowelt_path_merged = "Data/MergedData/"
+immowelt_path_merged = "Data/MergedData/MergedData_immowelt/"
+immowelt_path_clean = "Data/CleanData/"
+
 
 directories_raw = os.listdir(immowelt_path_raw)
 directories_clean = os.listdir(immowelt_path_clean)
 keys_collection_clear = []
 
-# print(len(data_2.keys()))
-# print(len(data_2))
-
 
 def LOG_DOCUMENTATION(result, situation, file_name, line):
-    if file_name is not None and line is not None:
-        if result == 'e':
-            logger.error('===ERROR===    The error was occurred while --- ' + situation +
-                         ' in file' + str(file_name) +
-                         ' and on the line ' + str(line))
-        if result == 'd':
-            logger.debug('The ' + situation +
-                         ' in file ' + str(file_name) +
-                         ' and on the line ' + str(line) + ' was successful')
+    if True:
+        if file_name is not None and line is not None:
+            if result == 'e':
+                logger.error('===ERROR===    The error was occurred while --- ' + situation +
+                             ' in file' + str(file_name) +
+                             ' and on the line ' + str(line))
+            if result == 'd':
+                logger.debug('The ' + situation +
+                             ' in file ' + str(file_name) +
+                             ' and on the line ' + str(line) + ' was successful')
 
-    elif file_name is not None and line is None:
-        if result == 'e':
-            logger.error('===ERROR===    The error was occurred while --- ' + situation +
-                         ' in file' + str(file_name))
-        if result == 'd':
-            logger.debug('The ' + situation +
-                         ' in file ' + str(file_name) + ' was successful')
+        elif file_name is not None and line is None:
+            if result == 'e':
+                logger.error('===ERROR===    The error was occurred while --- ' + situation +
+                             ' in file' + str(file_name))
+            if result == 'd':
+                logger.debug('The ' + situation +
+                             ' in file ' + str(file_name) + ' was successful')
 
-    else:
-        if result == 'e':
-            logger.error('The error was occurred while --- ' + situation)
-        if result == 'd':
-            logger.debug('The ' + situation + ' was successful')
+        else:
+            if result == 'e':
+                logger.error('The error was occurred while --- ' + situation)
+            if result == 'd':
+                logger.debug('The ' + situation + ' was successful')
 
 
 def TABLE_IMMOWELT_DATA_COPYING():
-    big_dict = {}
-    #for file_name in directories_raw:
-        #file_name_nocsv = str(file_name[:len(file_name)-4])
-        #try:
-        #    df = pd.read_csv(r'' + immowelt_path_raw + file_name)
-        #    df.to_json(r'' + immowelt_path_clean + file_name_nocsv + '.json')
-        #    big_dict = {**big_dict, **df}
-        #except:
-        #    LOG_DOCUMENTATION('e', 'data copying in json', file_name_nocsv, None)
-        #else:
-        #    LOG_DOCUMENTATION('d', 'data copying in json', file_name_nocsv, None)
-
     # example how to import csv and work in json
 
-    logger.debug(glob.glob(immowelt_path_raw + "*.csv"))
+    #logger.debug(glob.glob(immowelt_path_raw + "*.csv"))
     files: list = glob.glob(immowelt_path_raw + "*.csv")
 
     data_from_path: list = [pd.read_csv(file) for file in files]
@@ -76,30 +64,13 @@ def TABLE_IMMOWELT_DATA_COPYING():
     # big_dataframe: pd.DataFrame = pd.DataFrame(columns=columns)
 
     big_dataframe: pd.DataFrame = pd.concat(data_from_path, ignore_index=True)
-    print(big_dataframe.info())
 
     # turn to json
 
     data_json: json = big_dataframe.to_json()
-    with open(immowelt_path_merged + "MergedData_immowlet.json", "w") as f:
-        json.dump(data_json, f, indent=2)
-
-    #with open(immowelt_path_merged + "MergedData_immowlet.json", "w") as file:
-    #    stock = json.load(file)
-
-    #with open(immowelt_path_merged + "MergedData_immowlet.json", "w") as file:
-    #    json.dump(stock, file, indent=4)
-
-
-    #list_houses = []
-    #for iter in range(len(big_dict)):
-    #    list_houses.append({"headline": big_dict["headline"][iter]})
-    #    list_houses.append({"price": big_dict["price"][iter]})
-
-    #list_houses.to_json(r'' + immowelt_path_clean + file_name_nocsv + '.json')
-
-    #with open(immowelt_path_clean + 'BIG.json', "w") as file:
-    #    json.dump(list_houses, file, indent=4)
+    data_json = json.loads(data_json)
+    with open(immowelt_path_merged + "MergedData_immowelt.json", "w") as f:
+        json.dump(data_json, f, indent=4)
 
 
 def TABLE_IMMOWELT_CREATE():
@@ -154,7 +125,49 @@ def TABLE_IMMOWELT_CREATE():
         # LOG_DOCUMENTATION('d', 'enter a query to create a table', None, None)
 
 
-def TABLE_IMMOWELT_FILL(border):
+def TABLE_IMMOWELT_DATA_CLEANING():
+    # open the merged file and convert it to a dictionary
+    new_merged_dict = {}
+    clear_dict = {}
+    with open(immowelt_path_merged + "MergedData_immowelt.json", "r") as f:
+        data = json.load(f)
+
+    # Creating a clean dict with another structure
+    for i in data.keys():
+        for line_num in data[i]:
+            # logger.debug(line_num)
+            dict_per_line_clear = {}
+            dict_per_line_merged = {}
+            for key in data.keys():
+                if key == "immowelt_id":
+                    dict_per_line_clear[key] = immowelt_id_clean(data[key][line_num])
+                elif key == "address":
+                    dict_per_line_clear[key] = address_clean(data[key][line_num])
+                elif key == "price" or key == "num_rooms" or key == "space1" or key == "space3":
+                    dict_per_line_clear[key] = price_clean(data[key][line_num])
+                else:
+                    dict_per_line_clear[key] = data[key][line_num]
+                dict_per_line_merged[key] = data[key][line_num]
+
+            clear_dict[line_num] = dict_per_line_clear
+            new_merged_dict[line_num] = dict_per_line_merged
+        break
+
+    # Inserting a clean dict into a new file
+    f = open(immowelt_path_clean + "CleanData_immowelt.json", "w")
+    json.dump(clear_dict, f, indent=4)
+    logger.info('CleanData_immowelt was created')
+
+    # Inserting a merged dict into a new file
+    f = open(immowelt_path_merged + "NewMergedData_immowelt.json", "w")
+    json.dump(new_merged_dict, f, indent=4)
+    logger.info('MergedData_immowelt was created')
+
+
+def TABLE_IMMOWELT_DATA_FILL():
+    with open(immowelt_path_clean + "CleanData_immowelt.json", "r") as f:
+        data = json.load(f)
+
     # creating the first part of the query to create the table
     try:
         table_fill_line_TableInfo = "INSERT INTO immowelt ("
@@ -184,83 +197,39 @@ def TABLE_IMMOWELT_FILL(border):
         pass
         # LOG_DOCUMENTATION('d', 'creating an empty array with input data', None, None)
 
-    # ///
-    for file_name in directories_raw:  # work with each file
-        data_2 = pd.read_csv(immowelt_path_raw + file_name)
-        if border < 1:
-            border = len(data_2)  # the bound is the number of rows to be processed
-        for i in range(border):  # work with each line in a file
-            table_fill_line_DictInputData_new = table_fill_line_DictInputData_old
-            try:
-                for k in range(len(keys_collection_clear)):  # work with each key in a line
-                    if k == 17:
-                        print()
-                    # filling an array with input data
-                    for key in data_2:  # checking each key
-                        if key == keys_collection_clear[k]:
-                            table_fill_line_DictInputData_new[key] = \
-                                str(data_2[key][i]).replace('"', '-').replace("'", "-")
-            except:
-                LOG_DOCUMENTATION('e', 'filling an array with input data', file_name, i)
+
+
+    table_fill_line_Complete = table_fill_line_TableInfo
+
+    # entering data into a database row
+    for line_num in data.keys():
+        table_fill_line_Complete = table_fill_line_TableInfo
+        limiter = 0
+        for key in data[line_num]:
+            limiter += 1
+            if limiter != len(data[line_num]):
+
+                table_fill_line_Complete += "'" + str(data[line_num][key]).replace("'", '_').replace(',', ' ') + "',"
             else:
-                pass
-                # LOG_DOCUMENTATION('d', 'filling an array with input data', file_number, i)
+                table_fill_line_Complete += "'" + str(data[line_num][key]).replace("'", '_').replace(',', ' ') + "');"
+        cursor.execute(table_fill_line_Complete)
+        conn.commit()
 
-            # creating a complete input string
-            table_fill_line_Complate = table_fill_line_TableInfo
-            counter = 0
-            try:
-                for key in table_fill_line_DictInputData_new:
-                    counter += 1
-                    if counter != len(table_fill_line_DictInputData_new):
-                        # print(key)
-                        # print("    " + table_fill_line_DictInputData_new[key])
-                        # print()
+    #table_fill_line_Complate = table_fill_line_TableInfo
+    #limiter = 0
+    #for line_num in data.keys():
+    #    for key in data[line_num]:
+    #        limiter += 1
+    #        if limiter != len(data[line_num]):
+    #            table_fill_line_Complate += "'" + str((table_fill_line_DictInputData_n  ew[key])) + "',"
+    #        elif limiter == len(data[line_num]):
+    #            pass
+            #logger.debug(data[line_num][key])
 
-                        if key == 'immowelt_id':
-                            table_fill_line_Complate += \
-                                "'" + str((table_fill_line_DictInputData_new[key])) + "',"
 
-                        elif key == 'price':
-                            table_fill_line_Complate += \
-                                "'" + str((table_fill_line_DictInputData_new[key])) + "',"
 
-                        elif key == 'address':
-                            table_fill_line_Complate += \
-                                "'" + str((table_fill_line_DictInputData_new[key])) + "',"
 
-                        elif key == 'num_rooms':
-                            table_fill_line_Complate += \
-                                "'" + str((table_fill_line_DictInputData_new[key])) + "',"
 
-                        elif key == 'space1':
-                            table_fill_line_Complate += \
-                                "'" + str((table_fill_line_DictInputData_new[key])) + "',"
-
-                        elif key == 'space3':
-                            table_fill_line_Complate += \
-                                "'" + str((table_fill_line_DictInputData_new[key])) + "',"
-
-                        else:
-                            table_fill_line_Complate += "'" + str(table_fill_line_DictInputData_new[key]) + "',"
-                    else:
-                        table_fill_line_Complate += "'" + str(table_fill_line_DictInputData_new[key]) + "');"
-            except:
-                LOG_DOCUMENTATION('e', 'creating a complete input string', file_name, i)
-            else:
-                pass
-                # LOG_DOCUMENTATION('d', 'creating a complete input string', file_number, i)
-
-            # enter the full input string
-            try:
-                # logger.debug(table_fill_line_Complate)
-                cursor.execute(table_fill_line_Complate)
-                conn.commit()
-            except:
-                LOG_DOCUMENTATION('e', 'enter the full input string', file_name, i)
-            else:
-                pass
-                LOG_DOCUMENTATION('d', 'enter the full input string', file_name, i)
 
         # logger.info('The file "' + directories[file_number] + '" was successful filled in the table "immowelt"')
     logger.info('The table "immowelt" was filled')

@@ -1,7 +1,6 @@
 from ebay_ops import *
 from immonet_ops import *
 from immowelt_ops import *
-
 from loguru import logger
 
 logger.add("logs/main.log", format="{time} {level} {message}", level="DEBUG")
@@ -19,7 +18,8 @@ logger.info('# --------------------------- # Tabele "immowelt" # ---------------
 DROP_TABLE("immowelt")
 TABLE_IMMOWELT_CREATE()
 TABLE_IMMOWELT_DATA_COPYING()
-TABLE_IMMOWELT_FILL(100)
+TABLE_IMMOWELT_DATA_CLEANING()
+TABLE_IMMOWELT_DATA_FILL()
 
 
 # logger.info('# ------------------------------ # Table "ebay" # ------------------------------ #')

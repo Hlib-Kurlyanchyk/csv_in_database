@@ -55,12 +55,6 @@ def old_price_clean(data_price: str) -> float | None:
 
 
 def immowelt_id_clean(data_immowelt_id: str) -> str | None:
-    # if data_immowelt_id != str:
-    #    return None
-
-    # if data_immowelt_id is None or data_immowelt_id == '' or data_immowelt_id == 'nan':
-    #   return None
-
     if isinstance(data_immowelt_id, str):
         if len(data_immowelt_id) >= 7:
             try:
