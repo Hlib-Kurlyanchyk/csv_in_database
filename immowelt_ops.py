@@ -53,6 +53,9 @@ def log_documentation(result, situation, file_name, line):
 
 def TABLE_IMMOWELT_CREATE():
     # collection of all keys
+    global table_craattion_line
+
+    table_craattion_line = ''
     try:
         keys_collection_raw = []
         for file_name in range(len(directories_raw)):
@@ -77,30 +80,24 @@ def TABLE_IMMOWELT_CREATE():
     # creating a query to create a table
     try:
         table_craattion_line = "CREATE TABLE immowelt ("
-        counter = 0
+        limiter = 0
         for key in keys_collection_clear:
-            counter += 1
-            if counter == 1:
+            limiter += 1
+            if limiter == 1:
                 table_craattion_line += "num VARCHAR, "
-            elif (counter > 1) and (counter < len(keys_collection_clear)):
+            elif (limiter > 1) and (limiter < len(keys_collection_clear)):
                 table_craattion_line += key + " VARCHAR, "
-            elif counter == len(keys_collection_clear):
+            elif limiter == len(keys_collection_clear):
                 table_craattion_line += key + " VARCHAR);"
     except:
         log_documentation('e', 'creating a query to create a table', None, None)
     else:
-        pass
-        # LOG_DOCUMENTATION('d', 'creating a query to create a table', None, None)
+        log_documentation('d', 'creating a query to create a table', None, None)
 
     # enter a query to create a table
-    try:
-        cursor.execute(table_craattion_line)
-        conn.commit()
-    except:
-        log_documentation('e', 'enter a query to create a table', None, None)
-    else:
-        pass
-        # LOG_DOCUMENTATION('d', 'enter a query to create a table', None, None)
+    cursor.execute(table_craattion_line)
+    conn.commit()
+    log_documentation('d', 'enter a query to create a table', None, None)
 
 
 def TABLE_IMMOWELT_DATA_COPYING():
@@ -208,17 +205,4 @@ def TABLE_IMMOWELT_DATA_FILL():
                 table_fill_line_Complete += "'" + str(data[line_num][key]).replace("'", '_').replace(',', ' ') + "');"
         cursor.execute(table_fill_line_Complete)
         conn.commit()
-
-    # table_fill_line_Complate = table_fill_line_TableInfo
-    # limiter = 0
-    # for line_num in data.keys():
-    #    for key in data[line_num]:
-    #        limiter += 1
-    #        if limiter != len(data[line_num]):
-    #            table_fill_line_Complate += "'" + str((table_fill_line_DictInputData_n  ew[key])) + "',"
-    #        elif limiter == len(data[line_num]):
-    #            pass
-    #        logger.debug(data[line_num][key])
-
-        # logger.info('The file "' + directories[file_number] + '" was successful filled in the table "immowelt"')
     logger.info('The table "immowelt" was filled')

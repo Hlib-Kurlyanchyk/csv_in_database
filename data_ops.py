@@ -4,7 +4,7 @@ import os
 from loguru import logger
 import json
 import glob
-from cleaning_ops import immowelt_id_clean, address_clean, price_clean
+from cleaning_ops import *
 
 host = 'localhost'
 user = 'postgres'
@@ -14,128 +14,110 @@ password = '091807'
 conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host)
 cursor = conn.cursor()
 
-ebay_path_raw = "Data/RawData/RawData_ebay/"
-ebay_path_merged = "Data/MergedData/MergedData_ebay/"
-ebay_path_clean = "Data/CleanData/"
+
+def log_documentation(result, process):
+    if result == 'e':
+        logger.error('The error was occurred while --- ' + process)
+    if result == 'd':
+        logger.debug('The ' + process + ' was successful')
 
 
-directories_raw = os.listdir(ebay_path_raw)
-directories_clean = os.listdir(ebay_path_clean)
-keys_collection_clear = []
+def Table_crate(table_name):
+    global keys_collection_clear, keys_collection_raw
+    path_raw = "Data/RawData/RawData_" + table_name + "/"
+    directories_raw = os.listdir(path_raw)
 
-
-def log_documentation(result, situation, file_name, line):
-    if True:
-        if file_name is not None and line is not None:
-            if result == 'e':
-                logger.error('===ERROR===    The error was occurred while --- ' + situation +
-                             ' in file' + str(file_name) +
-                             ' and on the line ' + str(line))
-            if result == 'd':
-                logger.debug('The ' + situation +
-                             ' in file ' + str(file_name) +
-                             ' and on the line ' + str(line) + ' was successful')
-
-        elif file_name is not None and line is None:
-            if result == 'e':
-                logger.error('===ERROR===    The error was occurred while --- ' + situation +
-                             ' in file' + str(file_name))
-            if result == 'd':
-                logger.debug('The ' + situation +
-                             ' in file ' + str(file_name) + ' was successful')
-
-        else:
-            if result == 'e':
-                logger.error('The error was occurred while --- ' + situation)
-            if result == 'd':
-                logger.debug('The ' + situation + ' was successful')
-
-
-def Table_ebay_crate():
     # collection of all keys
-    global keys_collection_raw
     try:
         keys_collection_raw = []
         for file_name in range(len(directories_raw)):
-            data_2 = pd.read_csv(ebay_path_raw + directories_raw[file_name])
-            for key in data_2:
+            data = pd.read_csv(path_raw + directories_raw[file_name])
+            for key in data:
                 keys_collection_raw.append(key)
     except:
-        log_documentation('e', 'collection of all keys', None, None)
+        log_documentation('e', 'collection of all keys')
     else:
-        log_documentation('d', 'collection of all keys', None, None)
+        log_documentation('d', 'collection of all keys')
 
-    # deletion of repetiti  ons
+    # deletion of repetitions
     try:
+        keys_collection_clear = []
         for item in keys_collection_raw:
             if item not in keys_collection_clear:
                 keys_collection_clear.append(item)
     except:
-        log_documentation('e', 'deletion of repetitions', None, None)
+        log_documentation('e', 'deletion of repetitions')
     else:
-        log_documentation('d', 'deletion of repetitions', None, None)
+        log_documentation('d', 'deletion of repetitions')
 
     # creating a query to create a table
     try:
-        table_craation_line = "CREATE TABLE ebay ("
+        table_creation_line = "CREATE TABLE " + table_name + " ("
         counter = 0
         for key in keys_collection_clear:
             counter += 1
             if counter == 1:
-                table_craation_line += "Num VARCHAR, "
+                table_creation_line += "Num VARCHAR, "
             elif (counter > 1) and (counter < len(keys_collection_clear)):
-                table_craation_line += key + " VARCHAR, "
+                table_creation_line += key + " VARCHAR, "
             elif counter == len(keys_collection_clear):
-                table_craation_line += key + " VARCHAR);"
+                table_creation_line += key + " VARCHAR);"
     except:
-        log_documentation('e', 'creating a query to create a table', None, None)
+        log_documentation('e', 'creating a query to create a table')
     else:
-        pass
-        # log_documentation('d', 'creating a query to create a table', None, None)
+        log_documentation('d', 'creating a query to create a table')
 
     # enter a query to create a table
     try:
-        cursor.execute(table_craation_line)
+        cursor.execute(table_creation_line)
         conn.commit()
     except:
-        log_documentation('e', 'enter a query to create a table', None, None)
+        log_documentation('e', 'enter a query to create a table')
     else:
-        pass
-        # log_documentation('d', 'enter a query to create a table', None, None)
+        log_documentation('d', 'enter a query to create a table')
+
+    logger.info('The table "' + table_name + '" was created')
 
 
-def Table_ebay_copying():
+def Table_copying(table_name):
+    path_raw = "Data/RawData/RawData_" + table_name + "/"
+    path_merged = "Data/MergedData/MergedData_" + table_name + "/"
+
     # example how to import csv and work in json
-
-    files: list = glob.glob(ebay_path_raw + "*.csv")
-
-    data_from_path: list = [pd.read_csv(file) for file in files]
-
-    # assuming all dataframes have the same columns
-    # columns: list = data_from_path[1].columns
-    # big_dataframe: pd.DataFrame = pd.DataFrame(columns=columns)
-
-    big_dataframe: pd.DataFrame = pd.concat(data_from_path, ignore_index=True)
-
+    try:
+        files: list = glob.glob(path_raw + "*.csv")
+        data_from_path: list = [pd.read_csv(file) for file in files]
+        big_dataframe: pd.DataFrame = pd.concat(data_from_path, ignore_index=True)
+    except:
+        log_documentation('e', 'example how to import csv and work in json')
+    else:
+        log_documentation('d', 'example how to import csv and work in json')
     # turn to json
+    try:
+        data_json: json = big_dataframe.to_json()
+        data_json = json.loads(data_json)
+        with open(path_merged + "MergedData_" + table_name + ".json", "w") as f:
+            json.dump(data_json, f, indent=4)
+    except:
+        log_documentation('e', 'turn to json')
+    else:
+        log_documentation('d', 'turn to json')
+    logger.info('The data for table "' + table_name + '" was copied')
 
-    data_json: json = big_dataframe.to_json()
-    data_json = json.loads(data_json)
-    with open(ebay_path_merged + "MergedData_ebay.json", "w") as f:
-        json.dump(data_json, f, indent=4)
 
+def Table_cleaning(table_name):
+    path_merged = "Data/MergedData/MergedData_" + table_name + "/"
+    path_clean = "Data/CleanData/"
 
-def Table_ebay_cleaning():
     # open the merged file and convert it to a dictionary
     new_merged_dict = {}
     clear_dict = {}
-    with open(ebay_path_merged + "MergedData_ebay.json", "r") as f:
+    with open(path_merged + "MergedData_" + table_name + ".json", "r") as f:
         data = json.load(f)
 
     # Creating a clean dict with another structure
     for i in data.keys():
         for line_num in data[i]:
-            # logger.debug(line_num)
             dict_per_line_clear = {}
             dict_per_line_merged = {}
             for key in data.keys():
@@ -154,23 +136,25 @@ def Table_ebay_cleaning():
         break
 
     # Inserting a clean dict into a new file
-    f = open(ebay_path_clean + "CleanData_immowelt.json", "w")
+    f = open(path_clean + "CleanData_" + table_name + ".json", "w")
     json.dump(clear_dict, f, indent=4)
-    logger.info('CleanData_ebay was created')
+    logger.debug('CleanData_' + table_name + ' was created')
 
     # Inserting a merged dict into a new file
-    f = open(ebay_path_merged + "NewMergedData_immowelt.json", "w")
+    f = open(path_merged + "NewMergedData_" + table_name + ".json", "w")
     json.dump(new_merged_dict, f, indent=4)
-    logger.info('MergedData_ebay was created')
+    logger.debug('MergedData_' + table_name + ' was created')
 
 
-def Table_ebay_fill():
-    with open(ebay_path_clean + "CleanData_immowelt.json", "r") as f:
+def Table_fill(table_name):
+    path_clean = "Data/CleanData/"
+
+    with open(path_clean + "CleanData_" + table_name + ".json", "r") as f:
         data = json.load(f)
 
     # creating the first part of the query to create the table
     try:
-        table_fill_line_TableInfo = "INSERT INTO ebay ("
+        table_fill_line_TableInfo = "INSERT INTO " + table_name + " ("
         counter = 0
         for i in range(len(keys_collection_clear)):
             counter += 1
@@ -181,7 +165,7 @@ def Table_ebay_fill():
             elif counter == len(keys_collection_clear):
                 table_fill_line_TableInfo += keys_collection_clear[i] + ") VALUES ("
     except:
-        log_documentation('e', 'creating the first part of the query to create the table', None, None)
+        log_documentation('e', 'creating the first part of the query to create the table')
     else:
         pass
         # log_documentation('d', 'creating the first part of the query to create the table', None, None)
@@ -192,7 +176,7 @@ def Table_ebay_fill():
         for i in range(len(keys_collection_clear)):
             table_fill_line_DictInputData_old[keys_collection_clear[i]] = None
     except:
-        log_documentation('e', 'creating an empty array with input data', None, None)
+        log_documentation('e', 'creating an empty array with input data')
     else:
         pass
         # log_documentation('d', 'creating an empty array with input data', None, None)
@@ -209,4 +193,4 @@ def Table_ebay_fill():
                 table_fill_line_Complete += "'" + str(data[line_num][key]).replace("'", '_').replace(',', ' ') + "');"
         cursor.execute(table_fill_line_Complete)
         conn.commit()
-    logger.info('The table "ebay" was filled')
+    logger.info('The table "' + table_name + '" was filled')
