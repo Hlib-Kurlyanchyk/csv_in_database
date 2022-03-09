@@ -1,0 +1,52 @@
+2022-03-09T17:11:18.590334+0100 INFO 
+    
+    
+# -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ # Table "immowelt" # -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ #
+2022-03-09T17:11:18.603264+0100 INFO The table "immowelt" was dropped
+2022-03-09T17:11:19.181968+0100 DEBUG The collection of all keys was successful
+2022-03-09T17:11:19.182908+0100 DEBUG The deletion of repetitions was successful
+2022-03-09T17:11:19.182908+0100 DEBUG The creating a query to create a table was successful
+2022-03-09T17:11:19.190887+0100 DEBUG The enter a query to create a table was successful
+2022-03-09T17:11:19.191884+0100 INFO The table "immowelt" was created
+2022-03-09T17:11:19.765406+0100 DEBUG The example how to import csv and work in json was successful
+2022-03-09T17:11:21.443706+0100 DEBUG The turn to json was successful
+2022-03-09T17:11:21.444704+0100 INFO The data for table "immowelt" was copied
+2022-03-09T17:11:24.927898+0100 DEBUG CleanData_immowelt was created
+2022-03-09T17:11:26.907345+0100 DEBUG MergedData_immowelt was created
+2022-03-09T17:11:38.260399+0100 INFO The table "immowelt" was filled
+2022-03-09T17:11:38.278386+0100 INFO 
+    
+    
+# -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ # Table "immonet" # -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ #
+2022-03-09T17:11:38.288323+0100 INFO The table "immonet" was dropped
+2022-03-09T17:11:38.774653+0100 DEBUG The collection of all keys was successful
+2022-03-09T17:11:38.775656+0100 DEBUG The deletion of repetitions was successful
+2022-03-09T17:11:38.775656+0100 DEBUG The creating a query to create a table was successful
+2022-03-09T17:11:38.790421+0100 DEBUG The enter a query to create a table was successful
+2022-03-09T17:11:38.790421+0100 INFO The table "immonet" was created
+2022-03-09T17:11:39.269196+0100 DEBUG The example how to import csv and work in json was successful
+2022-03-09T17:11:40.568412+0100 DEBUG The turn to json was successful
+2022-03-09T17:11:40.568412+0100 INFO The data for table "immonet" was copied
+2022-03-09T17:11:42.822679+0100 DEBUG CleanData_immonet was created
+2022-03-09T17:11:43.863942+0100 DEBUG MergedData_immonet was created
+2022-03-09T17:11:48.667601+0100 INFO The table "immonet" was filled
+2022-03-09T17:11:48.681565+0100 INFO 
+    
+    
+# -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ # Table "ebay" # -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ #
+2022-03-09T17:11:48.690182+0100 INFO The table "ebay" was dropped
+2022-03-09T17:11:49.157619+0100 DEBUG The collection of all keys was successful
+2022-03-09T17:11:49.158617+0100 DEBUG The deletion of repetitions was successful
+2022-03-09T17:11:49.158617+0100 DEBUG The creating a query to create a table was successful
+2022-03-09T17:11:49.173272+0100 DEBUG The enter a query to create a table was successful
+2022-03-09T17:11:49.173272+0100 INFO The table "ebay" was created
+2022-03-09T17:11:49.637034+0100 DEBUG The example how to import csv and work in json was successful
+2022-03-09T17:11:50.930810+0100 DEBUG The turn to json was successful
+2022-03-09T17:11:50.931850+0100 INFO The data for table "ebay" was copied
+2022-03-09T17:11:52.691605+0100 DEBUG CleanData_ebay was created
+2022-03-09T17:11:53.571798+0100 DEBUG MergedData_ebay was created
+2022-03-09T17:11:58.459347+0100 INFO The table "ebay" was filled
+2022-03-09T17:11:58.472311+0100 INFO 
+
+
+# -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ # End of the program # -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ #

@@ -125,12 +125,12 @@ def Table_cleaning(table_name):
                     dict_per_line_clear[key] = immowelt_id_clean(data[key][line_num])
                 elif key == "address":
                     dict_per_line_clear[key] = address_clean(data[key][line_num])
-                elif key == "price" or key == "num_rooms" or key == "space1" or key == "space3" or key == "space":
+                elif key == "price" or key == "num_rooms" or key == "space" or key == "space1" or key == "space3":
                     dict_per_line_clear[key] = price_clean(data[key][line_num])
                 elif key == "immonet_id":
                     dict_per_line_clear[key] = immonet_id_clean(data[key][line_num])
                 elif key == "seller_id":
-                    dict_per_line_clear[key] = (data[key][line_num])
+                    dict_per_line_clear[key] = seller_id_clean(data[key][line_num])
                 else:
                     dict_per_line_clear[key] = str(data[key][line_num]).replace(',', '_')
                 dict_per_line_merged[key] = data[key][line_num]
