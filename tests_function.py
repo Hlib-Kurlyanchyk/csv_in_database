@@ -35,3 +35,24 @@ def test_address_clean(input_data, output_data):
 def test_price_clean(input_data, output_data):
     assert price_clean(input_data) == output_data
 
+
+@pytest.mark.parametrize("input_data, output_data", [("Immonet-Nr.: 45495398", 45495398),
+                                                     ("Immonet-Nr.: 45563695", 45563695),
+                                                     (None, None),
+                                                     (2, 2),
+                                                     ([], None),
+                                                     ('', None),
+                                                     ("ddsdvs", None)])
+def test_immonet_id_clean(input_data, output_data):
+    assert price_clean(input_data) == output_data
+
+
+@pytest.mark.parametrize("input_data, output_data", [("Anbieter-Objekt-ID: A9JXA36_2YSHW48-2080557", "A9JXA36_2YSHW48-2080557"),
+                                                     ("Anbieter-Objekt-ID: 34-414566", "34-414566"),
+                                                     (None, None),
+                                                     (2, None),
+                                                     ([], None),
+                                                     ('', None),
+                                                     ("ddsdvs", None)])
+def test_seller_id_clean(input_data, output_data):
+    assert seller_id_clean(input_data) == output_data

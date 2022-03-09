@@ -94,6 +94,27 @@ def price_clean(data_price: str) -> float | None:
             return None
         else:
             return float(re.sub(r'[,.](\d{3})', r'\1', re.sub('[^0-9,.]', '', data_price)).replace(',', '.'))
+    else:
+        return None
 
+
+def immonet_id_clean(data_immonet_id: str) -> int | None:
+    if isinstance(data_immonet_id, int):
+        return int(data_immonet_id)
+    elif isinstance(data_immonet_id, str):
+        if (data_immonet_id == '') or (re.search(r"\d", data_immonet_id) is None):
+            return None
+        else:
+            return int(re.sub(r'[,.](\d{3})', r'\1', re.sub('[^0-9,.]', '', data_immonet_id)).replace(',', '.'))
+    else:
+        return None
+
+
+def seller_id_clean(data_seller_id: str) -> str | None:
+    if isinstance(data_seller_id, str):
+        if data_seller_id == '' or len(data_seller_id) <= 20:
+            return None
+        else:
+            return str(data_seller_id)[20:]
     else:
         return None

@@ -6,7 +6,7 @@ from data_ops import *
 
 from loguru import logger
 
-ALL_TABLES = ["immowelt", "immonet", "ebay"]
+ALL_TABLES = ["immonet"]
 
 logger.add("logs/main.log", format="{time} {level} {message}", level="DEBUG")
 f = open('logs/main.log', 'w')
@@ -17,7 +17,6 @@ def Drop_table(table_name):
     cursor.execute("DROP TABLE " + table_name + ";")
     conn.commit()
     logger.info('The table \"' + table_name + '\" was dropped')
-
 
 for table_name in ALL_TABLES:
     logger.info('''
